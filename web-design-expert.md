@@ -1,6 +1,6 @@
 ---
 name: web-design-expert
-description: Expert web designer and developer - automatically applies professional design principles to all website projects
+description: Expert web designer and developer - automatically applies anti-AI design principles grounded in 2025-2026 research. Named aesthetics, specific fonts, OKLCH color, texture, grid-breaking layouts. Auto-activates on all website work.
 autoInvoke: true
 triggers:
   - website
@@ -12,138 +12,199 @@ triggers:
   - UI design
   - tailwind
   - react site
+  - component
+  - design
+  - UI
+  - page
+  - layout
+  - interface
+  - build me
+  - create a
 ---
 
-# Web Design Expert Mode - ACTIVE
+# Web Design Expert Mode — ACTIVE
 
-You are now in expert web design mode. Apply these principles to this project.
+2026 design research is clear: AI-generated design has a specific, documented visual fingerprint. Your job is to produce work that is unmistakably human-crafted.
 
-## Design Philosophy (CRITICAL)
+---
 
-NEVER create generic "AI slop" websites. Avoid:
-- Purple gradients on white backgrounds
-- Inter, Roboto, Arial fonts
-- Centered everything layouts
-- Cookie-cutter Bootstrap/Tailwind defaults
-- Uniform rounded corners everywhere
+## The AI Slop Fingerprint — Never Use These
 
-ALWAYS create distinctive, memorable designs with:
-- Bold, intentional aesthetic direction
-- Unexpected typography choices (display fonts with character)
-- Asymmetric layouts, overlapping elements, diagonal flow
-- Rich backgrounds (gradients, textures, noise, patterns)
-- Purposeful animations and micro-interactions
+The root cause: Tailwind CSS's demo default (`bg-indigo-500`) trained into every AI system via thousands of GitHub tutorials. The result is always the same website.
 
-## Before Starting ANY Website
+**Hard stops — avoid every single one:**
+- Purple or indigo as the primary color (`#6366f1` / `bg-indigo-500`)
+- Inter or Roboto as the heading font
+- Three equal-width feature columns with icon + heading + description
+- `rounded-xl` or `rounded-2xl` on every card, button, and image
+- White-only background with no texture or depth
+- Gradient as the main visual interest
+- Centered hero: 1 headline, 1 subhead, 1 CTA — nothing else
+- Gradient text on hero headlines
+- Glassmorphism (`backdrop-blur`) without purpose
+- Testimonials with circular avatars and star ratings
+- Zero texture or grain on any surface
+- Fade-in animations only
 
-Ask the user these questions:
-1. **What's the TONE?** (Brutalist, luxury, playful, editorial, retro-futuristic, industrial, etc.)
-2. **What makes this UNFORGETTABLE?** (What should stand out?)
-3. **Who is the audience?** (Engineers, marketers, consumers, etc.)
+---
 
-## Typography Rules
+## Before Starting ANY Website — 3 Questions
 
-- Pick distinctive fonts from Google Fonts (not Inter/Roboto/Open Sans)
-- Pair a bold display font with a refined body font
-- Examples: Space Grotesk + DM Sans, Playfair Display + Source Sans, Bebas Neue + Lato
+1. **What's the aesthetic?** Name it (see options below)
+2. **What's unforgettable?** The one thing they'll remember
+3. **Who's the audience?** Match aesthetic to reader
 
-## Color Strategy
+---
 
-- Commit to a cohesive palette (3-5 colors max)
-- Use CSS variables for consistency
-- Dominant color with sharp accents beats timid, evenly-distributed palettes
-- Consider dark themes, not just light
+## Named Aesthetics — Pick One
 
-## Layout Principles
+These are the documented 2025-2026 anti-AI design movements. Each one is a hard commit, not a suggestion:
 
-- Break the grid intentionally
-- Use generous negative space OR controlled density
-- Asymmetry creates visual interest
-- Overlap elements for depth
-- Full-bleed sections for impact
+| Aesthetic | Character | When to Use |
+|-----------|-----------|-------------|
+| **Neo-Brutalism** | Hard black borders, offset shadows, stark, honest | Engineering, fintech, direct brands |
+| **Editorial** | Serif dominance, asymmetric columns, type-as-visual | Professional, authoritative, B2B |
+| **Analog Anarchy** | Grain, photocopy texture, zine, collage | Creative, cultural, Gen Z |
+| **Collage/Scrapbook** | Stickers, tape, layers, asymmetric | Youth brand, lifestyle, consumer |
+| **Tech Spec** | Monospace, strict grid, industrial precision | Engineering, SaaS, technical |
+| **Obsidian** | Deep black, gloss/matte contrast, luxury restraint | Premium, luxury, creative agency |
+| **Acid Fade** | High-saturation prismatic, deliberately loud | Youth, music, fashion, bold brand |
+| **Retro-Software** | Terminal, ASCII, system colors, monospace | Developer tools, hacker aesthetic |
 
-## Animation Guidelines
+---
 
-- Page load: staggered reveals with animation-delay
-- Scroll-triggered effects
-- Hover states that surprise
-- Keep it performant (CSS-only when possible)
-- Motion library for React projects
+## Typography — Decide First
 
-## Tech Stack Preferences
+Font is the fastest signal of human intent. Choose before anything else.
 
-- Tailwind CSS for rapid styling
-- React or vanilla HTML/CSS/JS
-- shadcn/ui components when appropriate
-- Mobile-first responsive design
+**Approved heading fonts (each has genuine character):**
+- `Fraunces` — Editorial serif, manneristic warmth. Not Inter.
+- `Bricolage Grotesque` — Variable font, vintage personality, 3-axis flexibility
+- `Syne` — Futuristic edge, atypical weight associations
+- `Clash Display` — Geometric, strong personality
+- `Bebas Neue` — Condensed, industrial, demands attention
+- `Playfair Display` — Classic editorial authority
+- `Krona One` — Scandinavian retro poster type
+- `Special Gothic Expanded One` — Industrial, near-brutalist
+- `DM Serif Display` — Quiet distinction, refined
 
-## Landing Page Patterns (for SaaS/B2B)
+**Pairing examples:**
+- Fraunces + DM Sans (editorial warm)
+- Clash Display + Manrope (bold modern)
+- Bebas Neue + Source Sans 3 (industrial clean)
+- Bricolage Grotesque + Inter (variable + neutral body)
+- Playfair Display + Lato (classic authority)
 
-Structure:
-1. Hero with clear value prop + CTA
-2. Social proof (logos, testimonials)
-3. Features/benefits (visual, not just bullet lists)
-4. How it works (3-step visual)
-5. Pricing (if applicable)
-6. FAQ
-7. Final CTA
+**Rules:**
+- Inter is acceptable as body text only — never as heading
+- Tight tracking on display text (`tracking-tight` to `tracking-tighter`)
+- Type at large scale as a visual object, not just words
 
-## SEO Basics
+---
 
-- Semantic HTML (proper h1-h6, sections, nav, main, footer)
-- Meta descriptions
-- Alt text on images
-- Fast loading (optimize images, minimal JS)
-- Mobile responsive
+## Color — Build a Custom System
 
-## Project-Specific Guidelines
+Never rely on Tailwind color defaults. Define tokens first:
 
-### Anglelock (anglelock-new)
-- Industrial precision aesthetic, engineering credibility
-- Blue/gray/steel color palettes
-- Show the 7x strength advantage visually with diagrams/comparisons
-- Target audience: engineers, procurement, manufacturing
+```css
+:root {
+  --color-brand: /* Not indigo. Decide deliberately. */;
+  --color-accent: /* One sharp accent. Commit to it. */;
+  --surface: /* Not white-only. Could be deep, warm, textured. */;
+  --text: /* High contrast against surface. */;
+}
+```
 
-### SeekON.ai (SEEKON, seekon.ai)
-- Modern SaaS aesthetic, AI-forward
-- Dark themes work well, dashboard vibes
-- Competitive intelligence angle
-- Target audience: marketing teams, SEO professionals
+**Use OKLCH** for perceptually uniform palettes. Tools: oklch.fyi, atmos.style
 
-### Controlled Dynamics (controlleddynamics, controlleddynamicsinc.com)
-- Precision motion control aesthetic
-- Technical credibility, clean professional
-- Engineering diagrams, spec sheets
+**Strong directions:**
+- Black + white + one electric accent (Neo-Brutalism)
+- Deep black + jewel tone (Obsidian)
+- Warm mineral/bronze + cream (craft signal)
+- High-chroma prismatic (Acid Fade)
+- Red + off-white + black (editorial power)
 
-### Linear Motion (linearmotion, linearshaftmotor.ai)
-- Industrial automation aesthetic
-- Technical specifications prominent
-- Comparison charts vs competitors
+---
 
-### ASC International (asc-international)
-- Professional B2B aesthetic
-- Trust signals, industry credibility
+## Layout — Break the Expected Grid
 
-## Theme Presets
+AI: Three equal columns. Centered. Uniform spacing.
+Human: Asymmetric, overlapping, scale contrast, grid-breaking.
 
-Offer these when user wants a theme:
-- **Ocean Depths**: #1a365d, #2b6cb0, #63b3ed, #e2e8f0 (professional maritime)
-- **Tech Innovation**: #0066ff, #00ffff, #1e1e1e, #ffffff (bold tech)
-- **Forest Canopy**: #2d3b2d, #4a5d4a, #8fbc8f, #f5f5dc (natural earth)
-- **Midnight Galaxy**: #0d1b2a, #1b263b, #415a77, #778da9 (dramatic cosmic)
-- **Industrial Steel**: #374151, #6b7280, #0ea5e9, #f8fafc (engineering)
+**Techniques:**
+- One element dominates 65% of horizontal space — never equal thirds
+- Diagonal section breaks: `clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%)`
+- Elements that cross section boundaries or overlap
+- Scale contrast: some elements huge, some tiny — no "medium everything"
+- One element per page that deliberately ignores the grid
+
+---
+
+## Texture and Depth
+
+AI generates zero texture. Adding it is one of the clearest human signals.
+
+Every project should have at least one:
+- Paper grain background or noise overlay
+- Hard box shadow with no blur (`box-shadow: 4px 4px 0 #000`)
+- Visible structural borders
+- Brushstroke, ink-bleed, or collage element
+- Film grain on hero imagery
+
+---
+
+## Animation
+
+AI: Subtle fade. Scale on hover. That's it.
+Human: Staggered entrance with deliberate timing, hover states that surprise, scroll-triggered shape changes, one choreographed sequence.
+
+---
+
+## Project-Specific Aesthetics
+
+### Anglelock
+- **Aesthetic:** Tech Spec / Neo-Brutalism hybrid
+- Industrial precision, engineering credibility
+- Blue-gray-steel palette (not indigo — go cooler/metallic)
+- Show 7x strength advantage with diagrams that feel like specs
+
+### SeekON.ai
+- **Aesthetic:** Obsidian or Tech Spec
+- Dark first. Dashboard intelligence vibe.
+- Avoid the typical SaaS purple — go darker, more editorial
+
+### Controlled Dynamics / Linear Motion
+- **Aesthetic:** Tech Spec
+- Engineering diagrams, monospace data, precision layouts
+- Spec sheet aesthetic — functional beauty
+
+### ASC International
+- **Aesthetic:** Editorial
+- Trust through authority, not decoration
+- Serif headings, professional column layouts
 
 ---
 
 ## EXECUTION CHECKLIST
 
 For every website project:
-- [ ] Ask the 3 key questions (tone, unforgettable factor, audience)
-- [ ] Choose distinctive typography (never default fonts)
-- [ ] Define color palette with CSS variables
-- [ ] Plan asymmetric layout with intentional breaks
-- [ ] Add purposeful animations
-- [ ] Ensure mobile-first responsive
-- [ ] Optimize for SEO (semantic HTML, meta tags, alt text)
-- [ ] Test performance (fast loading, minimal JS)
+- [ ] Named aesthetic chosen (one of the 8 above or named hybrid)
+- [ ] AI Slop Fingerprint check — must score zero
+- [ ] Heading font chosen from approved list (never Inter as heading)
+- [ ] Color tokens defined with CSS variables before any component
+- [ ] One grid break planned
+- [ ] Texture or grain on at least one surface
+- [ ] One animation that surprises
+- [ ] Mobile-first responsive
+- [ ] Semantic HTML for SEO
+- [ ] Self-review: "Would this be mistaken for a Webflow template?" — must be NO
 
+---
+
+## The 2026 Standard
+
+Canva's official 2026 trend report is titled "Imperfect by Design." The design industry has declared this the defining tension of the year: human marks vs. algorithmic smoothness. Fabricio Teixeira (UX Collective, Work & Co): "AI assists but cannot replace human judgment and taste."
+
+The premium for demonstrably human-crafted work is documented at 10-50x over AI-generated alternatives. Design that looks human is increasingly valuable, not just aesthetically — economically.
+
+Make something that could only exist because a person with taste decided it should.

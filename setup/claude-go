@@ -1,0 +1,68 @@
+#!/bin/bash
+# claude-go: Syncs skills from GitHub then launches Claude Code
+# Skills source: github.com/watchdogpedro/claude-skills
+# Personal rules: ~/.claude/CLAUDE-personal-rules.md (never overwritten)
+
+PERSONAL_RULES="$HOME/.claude/CLAUDE-personal-rules.md"
+CLAUDE_MD="$HOME/.claude/CLAUDE.md"
+REPO="watchdogpedro/claude-skills"
+
+# List of skill files to pull from GitHub
+SKILL_FILES=(
+  "web-design-expert.md"
+  "frontend-development.md"
+  "test-driven-development.md"
+  "webapp-testing.md"
+  "distinctive-design/SKILL.md"
+  "frontend-design/SKILL.md"
+  "n8n-code-javascript/SKILL.md"
+  "n8n-code-python/SKILL.md"
+  "n8n-expression-syntax/SKILL.md"
+  "n8n-mcp-tools-expert/SKILL.md"
+  "n8n-node-configuration/SKILL.md"
+  "n8n-validation-expert/SKILL.md"
+  "n8n-workflow-patterns/SKILL.md"
+)
+
+echo "Syncing skills from GitHub ($REPO)..."
+
+# Start with personal rules
+if [ ! -f "$PERSONAL_RULES" ]; then
+  echo "ERROR: Personal rules file not found at $PERSONAL_RULES"
+  echo "Launching Claude without sync..."
+  exec claude "$@"
+fi
+
+cp "$PERSONAL_RULES" "$CLAUDE_MD"
+
+# Add separator
+echo "" >> "$CLAUDE_MD"
+echo "---" >> "$CLAUDE_MD"
+echo "" >> "$CLAUDE_MD"
+echo "# SKILLS (Auto-synced from github.com/$REPO)" >> "$CLAUDE_MD"
+echo "" >> "$CLAUDE_MD"
+
+# Pull each skill file from GitHub
+FAIL_COUNT=0
+for skill in "${SKILL_FILES[@]}"; do
+  CONTENT=$(gh api "repos/$REPO/contents/$skill" -H "Accept: application/vnd.github.raw" 2>/dev/null)
+  if [ $? -eq 0 ] && [ -n "$CONTENT" ]; then
+    echo "  Loaded: $skill"
+    echo "" >> "$CLAUDE_MD"
+    echo "---" >> "$CLAUDE_MD"
+    echo "" >> "$CLAUDE_MD"
+    echo "$CONTENT" >> "$CLAUDE_MD"
+  else
+    echo "  SKIPPED (not found): $skill"
+    FAIL_COUNT=$((FAIL_COUNT + 1))
+  fi
+done
+
+LOADED=$((${#SKILL_FILES[@]} - FAIL_COUNT))
+echo ""
+echo "Loaded $LOADED/${#SKILL_FILES[@]} skills from GitHub."
+echo "Launching Claude Code..."
+echo ""
+
+# Launch Claude, passing through any arguments (like a project path)
+exec claude "$@"

@@ -1,11 +1,39 @@
 #!/bin/bash
 # claude-go: Syncs skills from GitHub then launches Claude Code
+# Usage: claude-go [project-name]
+# Example: claude-go seekon.ai
 # Skills source: github.com/watchdogpedro/claude-skills
 # Personal rules: ~/.claude/CLAUDE-personal-rules.md (never overwritten)
 
 PERSONAL_RULES="$HOME/.claude/CLAUDE-personal-rules.md"
 CLAUDE_MD="$HOME/.claude/CLAUDE.md"
 REPO="watchdogpedro/claude-skills"
+
+# ─── Project Registry ────────────────────────────────────────────────────────
+# Format: ["alias"]="local_path"
+# Use any alias: claude-go seekon / claude-go seekon.ai / claude-go surnetics
+declare -A PROJECTS
+PROJECTS["seekon"]="/Users/pauldenman/seekon.ai"
+PROJECTS["seekon.ai"]="/Users/pauldenman/seekon.ai"
+PROJECTS["surnetics"]="/Users/pauldenman/surnetics"
+PROJECTS["surnetics.com"]="/Users/pauldenman/surnetics"
+PROJECTS["anglelock"]="/Users/pauldenman/anglelock-new"
+PROJECTS["anglelockllc"]="/Users/pauldenman/anglelockllc.com"
+PROJECTS["anglelockllc.com"]="/Users/pauldenman/anglelockllc.com"
+PROJECTS["asc"]="/Users/pauldenman/asc-international"
+PROJECTS["asc-international"]="/Users/pauldenman/asc-international"
+PROJECTS["solderpaste"]="/Users/pauldenman/asc-international"
+PROJECTS["linearmotion"]="/Users/pauldenman/linearmotion"
+PROJECTS["linearshaftmotor"]="/Users/pauldenman/linearshaftmotor.ai"
+PROJECTS["linearshaftmotor.ai"]="/Users/pauldenman/linearshaftmotor.ai"
+PROJECTS["controlleddynamics"]="/Users/pauldenman/controlleddynamics"
+PROJECTS["controlleddynamicsinc"]="/Users/pauldenman/controlleddynamicsinc.com"
+PROJECTS["pauldenman"]="/Users/pauldenman/pauldenman.com"
+PROJECTS["pauldenman.com"]="/Users/pauldenman/pauldenman.com"
+PROJECTS["christina"]="/Users/pauldenman/christinanoellee.com"
+PROJECTS["christinanoellee"]="/Users/pauldenman/christinanoellee.com"
+PROJECTS["christinanoellee.com"]="/Users/pauldenman/christinanoellee.com"
+# ─────────────────────────────────────────────────────────────────────────────
 
 # List of skill files to pull from GitHub
 SKILL_FILES=(
@@ -24,13 +52,32 @@ SKILL_FILES=(
   "n8n-workflow-patterns/SKILL.md"
 )
 
+# ─── Project lookup (first argument) ─────────────────────────────────────────
+PROJECT_ARG="${1:-}"
+PROJECT_DIR=""
+
+if [ -n "$PROJECT_ARG" ]; then
+  # Check registry first
+  if [ -n "${PROJECTS[$PROJECT_ARG]+_}" ]; then
+    PROJECT_DIR="${PROJECTS[$PROJECT_ARG]}"
+  # Fallback: treat as a direct path
+  elif [ -d "$PROJECT_ARG" ]; then
+    PROJECT_DIR="$PROJECT_ARG"
+  else
+    echo "⚠️  Unknown project: '$PROJECT_ARG'"
+    echo "   Known projects: ${!PROJECTS[@]}"
+    echo "   Launching Claude in current directory..."
+  fi
+fi
+# ─────────────────────────────────────────────────────────────────────────────
+
 echo "Syncing skills from GitHub ($REPO)..."
 
 # Start with personal rules
 if [ ! -f "$PERSONAL_RULES" ]; then
   echo "ERROR: Personal rules file not found at $PERSONAL_RULES"
   echo "Launching Claude without sync..."
-  exec claude "$@"
+  exec claude
 fi
 
 cp "$PERSONAL_RULES" "$CLAUDE_MD"
@@ -61,8 +108,20 @@ done
 LOADED=$((${#SKILL_FILES[@]} - FAIL_COUNT))
 echo ""
 echo "Loaded $LOADED/${#SKILL_FILES[@]} skills from GitHub."
+
+# ─── cd + git pull if project specified ──────────────────────────────────────
+if [ -n "$PROJECT_DIR" ]; then
+  echo ""
+  echo "📁 Project: $PROJECT_ARG"
+  echo "   Path: $PROJECT_DIR"
+  cd "$PROJECT_DIR" || { echo "ERROR: Could not cd to $PROJECT_DIR"; exec claude; }
+  echo "   Pulling latest from GitHub..."
+  git pull 2>&1 | sed 's/^/   /'
+  echo ""
+fi
+# ─────────────────────────────────────────────────────────────────────────────
+
 echo "Launching Claude Code..."
 echo ""
 
-# Launch Claude, passing through any arguments (like a project path)
-exec claude "$@"
+exec claude

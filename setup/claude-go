@@ -10,29 +10,24 @@ CLAUDE_MD="$HOME/.claude/CLAUDE.md"
 REPO="watchdogpedro/claude-skills"
 
 # ─── Project Registry ────────────────────────────────────────────────────────
-# Format: ["alias"]="local_path"
 # Use any alias: claude-go seekon / claude-go seekon.ai / claude-go surnetics
-declare -A PROJECTS
-PROJECTS["seekon"]="/Users/pauldenman/seekon.ai"
-PROJECTS["seekon.ai"]="/Users/pauldenman/seekon.ai"
-PROJECTS["surnetics"]="/Users/pauldenman/surnetics"
-PROJECTS["surnetics.com"]="/Users/pauldenman/surnetics"
-PROJECTS["anglelock"]="/Users/pauldenman/anglelock-new"
-PROJECTS["anglelockllc"]="/Users/pauldenman/anglelockllc.com"
-PROJECTS["anglelockllc.com"]="/Users/pauldenman/anglelockllc.com"
-PROJECTS["asc"]="/Users/pauldenman/asc-international"
-PROJECTS["asc-international"]="/Users/pauldenman/asc-international"
-PROJECTS["solderpaste"]="/Users/pauldenman/asc-international"
-PROJECTS["linearmotion"]="/Users/pauldenman/linearmotion"
-PROJECTS["linearshaftmotor"]="/Users/pauldenman/linearshaftmotor.ai"
-PROJECTS["linearshaftmotor.ai"]="/Users/pauldenman/linearshaftmotor.ai"
-PROJECTS["controlleddynamics"]="/Users/pauldenman/controlleddynamics"
-PROJECTS["controlleddynamicsinc"]="/Users/pauldenman/controlleddynamicsinc.com"
-PROJECTS["pauldenman"]="/Users/pauldenman/pauldenman.com"
-PROJECTS["pauldenman.com"]="/Users/pauldenman/pauldenman.com"
-PROJECTS["christina"]="/Users/pauldenman/christinanoellee.com"
-PROJECTS["christinanoellee"]="/Users/pauldenman/christinanoellee.com"
-PROJECTS["christinanoellee.com"]="/Users/pauldenman/christinanoellee.com"
+# Uses case statement for bash 3.2 compatibility (macOS default)
+get_project_path() {
+  case "$1" in
+    seekon|seekon.ai)                          echo "/Users/pauldenman/seekon.ai" ;;
+    surnetics|surnetics.com)                   echo "/Users/pauldenman/surnetics" ;;
+    anglelock)                                 echo "/Users/pauldenman/anglelock-new" ;;
+    anglelockllc|anglelockllc.com)             echo "/Users/pauldenman/anglelockllc.com" ;;
+    asc|asc-international|solderpaste)         echo "/Users/pauldenman/asc-international" ;;
+    linearmotion)                              echo "/Users/pauldenman/linearmotion" ;;
+    linearshaftmotor|linearshaftmotor.ai)      echo "/Users/pauldenman/linearshaftmotor.ai" ;;
+    controlleddynamics)                        echo "/Users/pauldenman/controlleddynamics" ;;
+    controlleddynamicsinc|controlleddynamicsinc.com) echo "/Users/pauldenman/controlleddynamicsinc.com" ;;
+    pauldenman|pauldenman.com)                 echo "/Users/pauldenman/pauldenman.com" ;;
+    christina|christinanoellee|christinanoellee.com) echo "/Users/pauldenman/christinanoellee.com" ;;
+    *)                                         echo "" ;;
+  esac
+}
 # ─────────────────────────────────────────────────────────────────────────────
 
 # List of skill files to pull from GitHub
@@ -57,16 +52,16 @@ PROJECT_ARG="${1:-}"
 PROJECT_DIR=""
 
 if [ -n "$PROJECT_ARG" ]; then
-  # Check registry first
-  if [ -n "${PROJECTS[$PROJECT_ARG]+_}" ]; then
-    PROJECT_DIR="${PROJECTS[$PROJECT_ARG]}"
-  # Fallback: treat as a direct path
-  elif [ -d "$PROJECT_ARG" ]; then
-    PROJECT_DIR="$PROJECT_ARG"
-  else
-    echo "⚠️  Unknown project: '$PROJECT_ARG'"
-    echo "   Known projects: ${!PROJECTS[@]}"
-    echo "   Launching Claude in current directory..."
+  PROJECT_DIR="$(get_project_path "$PROJECT_ARG")"
+  if [ -z "$PROJECT_DIR" ]; then
+    # Fallback: treat as a direct path
+    if [ -d "$PROJECT_ARG" ]; then
+      PROJECT_DIR="$PROJECT_ARG"
+    else
+      echo "⚠️  Unknown project: '$PROJECT_ARG'"
+      echo "   Known aliases: seekon, surnetics, anglelock, anglelockllc, asc, linearmotion, linearshaftmotor, controlleddynamics, controlleddynamicsinc, pauldenman, christina"
+      echo "   Launching Claude in current directory..."
+    fi
   fi
 fi
 # ─────────────────────────────────────────────────────────────────────────────
@@ -77,7 +72,8 @@ echo "Syncing skills from GitHub ($REPO)..."
 if [ ! -f "$PERSONAL_RULES" ]; then
   echo "ERROR: Personal rules file not found at $PERSONAL_RULES"
   echo "Launching Claude without sync..."
-  exec claude
+  claude
+  kill -TERM $PPID 2>/dev/null || exit 0
 fi
 
 cp "$PERSONAL_RULES" "$CLAUDE_MD"
@@ -114,14 +110,21 @@ if [ -n "$PROJECT_DIR" ]; then
   echo ""
   echo "📁 Project: $PROJECT_ARG"
   echo "   Path: $PROJECT_DIR"
-  cd "$PROJECT_DIR" || { echo "ERROR: Could not cd to $PROJECT_DIR"; exec claude; }
+  cd "$PROJECT_DIR" || { echo "ERROR: Could not cd to $PROJECT_DIR"; claude; kill -TERM $PPID 2>/dev/null; exit 0; }
   echo "   Pulling latest from GitHub..."
   git pull 2>&1 | sed 's/^/   /'
   echo ""
 fi
 # ─────────────────────────────────────────────────────────────────────────────
 
-echo "Launching Claude Code..."
+echo "Launching Claude Code (fresh session — no resume)..."
 echo ""
 
-exec claude
+# Run Claude fresh (no -c flag = no resume of last session)
+claude --dangerously-skip-permissions
+
+# After /exit — close this terminal window automatically
+echo ""
+echo "Session ended. Closing terminal..."
+sleep 1
+kill -TERM $PPID 2>/dev/null || exit 0

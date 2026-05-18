@@ -74,8 +74,61 @@ else
 fi
 
 echo ""
+
+# ─── Install Claude Code Plugins ─────────────────────────────────────────────
+echo "Installing Claude Code plugins..."
+echo ""
+
+# Add custom marketplaces first
+echo "  Adding marketplaces..."
+claude plugin marketplace add anthropic-agent-skills https://raw.githubusercontent.com/anthropics/skills/main/marketplace.json 2>/dev/null || true
+claude plugin marketplace add superpowers-dev https://raw.githubusercontent.com/obra/superpowers/main/marketplace.json 2>/dev/null || true
+echo ""
+
+# Official plugins
+OFFICIAL_PLUGINS=(
+  "frontend-design"
+  "code-modernization"
+  "commit-commands"
+  "feature-dev"
+  "hookify"
+  "pr-review-toolkit"
+  "claude-md-management"
+  "ralph-loop"
+  "vercel"
+  "supabase"
+  "stripe"
+  "github"
+  "neon"
+  "playwright"
+  "security-guidance"
+  "skill-creator"
+  "typescript-lsp"
+)
+
+echo "  Installing official plugins..."
+for plugin in "${OFFICIAL_PLUGINS[@]}"; do
+  claude plugin install "${plugin}@claude-plugins-official" 2>/dev/null && echo "    ✔ $plugin" || echo "    ⚠ $plugin (may already be installed)"
+done
+echo ""
+
+# Anthropic skills
+ANTHROPIC_PLUGINS=("claude-api" "document-skills" "example-skills")
+echo "  Installing Anthropic skills..."
+for plugin in "${ANTHROPIC_PLUGINS[@]}"; do
+  claude plugin install "${plugin}@anthropic-agent-skills" 2>/dev/null && echo "    ✔ $plugin" || echo "    ⚠ $plugin (may already be installed)"
+done
+echo ""
+
+# Superpowers
+echo "  Installing superpowers..."
+claude plugin install "superpowers@superpowers-dev" 2>/dev/null && echo "    ✔ superpowers" || echo "    ⚠ superpowers (may already be installed)"
+echo ""
+# ─────────────────────────────────────────────────────────────────────────────
+
 echo "================================"
 echo "Done! Run: claude-go"
 echo ""
 echo "Skills auto-loaded from: github.com/$REPO"
+echo "Plugins: ${#OFFICIAL_PLUGINS[@]} official + ${#ANTHROPIC_PLUGINS[@]} Anthropic + superpowers"
 echo ""

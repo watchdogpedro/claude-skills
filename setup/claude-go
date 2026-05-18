@@ -66,6 +66,17 @@ if [ -n "$PROJECT_ARG" ]; then
 fi
 # ─────────────────────────────────────────────────────────────────────────────
 
+# Keep memory compiler up to date
+if [ -d "$HOME/.claude/memory-compiler" ]; then
+  echo "Updating memory compiler..."
+  git -C "$HOME/.claude/memory-compiler" pull --quiet 2>/dev/null || true
+fi
+
+# Keep awesome-claude-code reference up to date
+if [ -d "$HOME/.claude/awesome-claude-code" ]; then
+  git -C "$HOME/.claude/awesome-claude-code" pull --quiet 2>/dev/null || true
+fi
+
 echo "Syncing skills from GitHub ($REPO)..."
 
 # Start with personal rules

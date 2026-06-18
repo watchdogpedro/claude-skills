@@ -40,6 +40,7 @@ SKILL_FILES=(
   "frontend-design/SKILL.md"
   "algorithmic-art/SKILL.md"
   "canvas-design/SKILL.md"
+  "motion-design/SKILL.md"
   "n8n-code-javascript/SKILL.md"
   "n8n-code-python/SKILL.md"
   "n8n-expression-syntax/SKILL.md"

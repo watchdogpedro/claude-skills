@@ -1,13 +1,21 @@
 #!/bin/bash
-# claude-go: Syncs skills from GitHub then launches Claude Code
+# claude-go: Updates rules + skills from GitHub, then launches Claude Code
 # Usage: claude-go [project-name]
 # Example: claude-go seekon.ai
+#
+# HYBRID LOADING (June 2026):
+#   • CLAUDE.md = personal rules + design philosophy ONLY (always-on, lightweight)
+#   • Skills live as folders in ~/.claude/skills and load ON-DEMAND, only when
+#     a task actually needs them — so unrelated sessions stay fast and uncluttered.
+#
 # Skills source: github.com/watchdogpedro/claude-skills
 # Personal rules: ~/.claude/CLAUDE-personal-rules.md (never overwritten)
 
 PERSONAL_RULES="$HOME/.claude/CLAUDE-personal-rules.md"
 CLAUDE_MD="$HOME/.claude/CLAUDE.md"
+SKILLS_DIR="$HOME/.claude/skills"
 REPO="watchdogpedro/claude-skills"
+REPO_URL="https://github.com/$REPO.git"
 
 # ─── Project Registry ────────────────────────────────────────────────────────
 # Use any alias: claude-go seekon / claude-go seekon.ai / claude-go surnetics
@@ -30,24 +38,17 @@ get_project_path() {
 }
 # ─────────────────────────────────────────────────────────────────────────────
 
-# List of skill files to pull from GitHub
-SKILL_FILES=(
-  "web-design-expert.md"
-  "frontend-development.md"
-  "test-driven-development.md"
-  "webapp-testing.md"
-  "distinctive-design/SKILL.md"
-  "frontend-design/SKILL.md"
-  "algorithmic-art/SKILL.md"
-  "canvas-design/SKILL.md"
-  "motion-design/SKILL.md"
-  "n8n-code-javascript/SKILL.md"
-  "n8n-code-python/SKILL.md"
-  "n8n-expression-syntax/SKILL.md"
-  "n8n-mcp-tools-expert/SKILL.md"
-  "n8n-node-configuration/SKILL.md"
-  "n8n-validation-expert/SKILL.md"
-  "n8n-workflow-patterns/SKILL.md"
+# Skills that load on-demand from ~/.claude/skills (synced from the repo below).
+# algorithmic-art and canvas-design are intentionally NOT here — the Anthropic
+# skills plugin already provides both on-demand (canvas-design with its fonts).
+# This list is documentation; actual sync is a single git pull of the repo.
+ON_DEMAND_SKILLS=(
+  "distinctive-design" "frontend-design" "motion-design"
+  "web-design-expert" "frontend-development"
+  "test-driven-development" "webapp-testing"
+  "n8n-code-javascript" "n8n-code-python" "n8n-expression-syntax"
+  "n8n-mcp-tools-expert" "n8n-node-configuration"
+  "n8n-validation-expert" "n8n-workflow-patterns"
 )
 
 # ─── Project lookup (first argument) ─────────────────────────────────────────
@@ -80,51 +81,40 @@ if [ -d "$HOME/.claude/awesome-claude-code" ]; then
   git -C "$HOME/.claude/awesome-claude-code" pull --quiet 2>/dev/null || true
 fi
 
-echo "Syncing skills from GitHub ($REPO)..."
+# ─── Update on-demand skills (folders in ~/.claude/skills) ───────────────────
+echo "Updating on-demand skills from GitHub ($REPO)..."
+if [ -d "$SKILLS_DIR/.git" ]; then
+  if git -C "$SKILLS_DIR" pull --quiet 2>/dev/null; then
+    echo "  ✅ Skills updated (${#ON_DEMAND_SKILLS[@]} available, load only when needed)."
+  else
+    echo "  ⚠️  Skills update skipped (offline?) — using existing local skills."
+  fi
+else
+  echo "  Cloning skills into $SKILLS_DIR ..."
+  git clone --quiet "$REPO_URL" "$SKILLS_DIR" 2>/dev/null \
+    && echo "  ✅ Skills cloned." \
+    || echo "  ⚠️  Clone failed — continuing without skill sync."
+fi
+# ─────────────────────────────────────────────────────────────────────────────
 
-# Start with personal rules
+# ─── Build CLAUDE.md = personal rules ONLY (always-on, lightweight) ───────────
 if [ ! -f "$PERSONAL_RULES" ]; then
   echo "ERROR: Personal rules file not found at $PERSONAL_RULES"
   echo "Launching Claude without sync..."
-  claude
+  claude --dangerously-skip-permissions
   kill -TERM $PPID 2>/dev/null || exit 0
 fi
 
 cp "$PERSONAL_RULES" "$CLAUDE_MD"
-
-# Add separator
-echo "" >> "$CLAUDE_MD"
-echo "---" >> "$CLAUDE_MD"
-echo "" >> "$CLAUDE_MD"
-echo "# SKILLS (Auto-synced from github.com/$REPO)" >> "$CLAUDE_MD"
-echo "" >> "$CLAUDE_MD"
-
-# Pull each skill file from GitHub
-FAIL_COUNT=0
-for skill in "${SKILL_FILES[@]}"; do
-  CONTENT=$(gh api "repos/$REPO/contents/$skill" -H "Accept: application/vnd.github.raw" 2>/dev/null)
-  if [ $? -eq 0 ] && [ -n "$CONTENT" ]; then
-    echo "  Loaded: $skill"
-    echo "" >> "$CLAUDE_MD"
-    echo "---" >> "$CLAUDE_MD"
-    echo "" >> "$CLAUDE_MD"
-    echo "$CONTENT" >> "$CLAUDE_MD"
-  else
-    echo "  SKIPPED (not found): $skill"
-    FAIL_COUNT=$((FAIL_COUNT + 1))
-  fi
-done
-
-LOADED=$((${#SKILL_FILES[@]} - FAIL_COUNT))
-echo ""
-echo "Loaded $LOADED/${#SKILL_FILES[@]} skills from GitHub."
+echo "  ✅ CLAUDE.md set to personal rules + design philosophy (skills load on-demand)."
+# ─────────────────────────────────────────────────────────────────────────────
 
 # ─── cd + git pull if project specified ──────────────────────────────────────
 if [ -n "$PROJECT_DIR" ]; then
   echo ""
   echo "📁 Project: $PROJECT_ARG"
   echo "   Path: $PROJECT_DIR"
-  cd "$PROJECT_DIR" || { echo "ERROR: Could not cd to $PROJECT_DIR"; claude; kill -TERM $PPID 2>/dev/null; exit 0; }
+  cd "$PROJECT_DIR" || { echo "ERROR: Could not cd to $PROJECT_DIR"; claude --dangerously-skip-permissions; kill -TERM $PPID 2>/dev/null; exit 0; }
   echo "   Pulling latest from GitHub..."
   git pull 2>&1 | sed 's/^/   /'
   echo ""

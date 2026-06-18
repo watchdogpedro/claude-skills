@@ -38,6 +38,8 @@ SKILL_FILES=(
   "webapp-testing.md"
   "distinctive-design/SKILL.md"
   "frontend-design/SKILL.md"
+  "algorithmic-art/SKILL.md"
+  "canvas-design/SKILL.md"
   "n8n-code-javascript/SKILL.md"
   "n8n-code-python/SKILL.md"
   "n8n-expression-syntax/SKILL.md"

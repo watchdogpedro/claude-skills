@@ -81,8 +81,8 @@ echo ""
 
 # Add custom marketplaces first
 echo "  Adding marketplaces..."
-claude plugin marketplace add anthropic-agent-skills https://raw.githubusercontent.com/anthropics/skills/main/marketplace.json 2>/dev/null || true
-claude plugin marketplace add superpowers-dev https://raw.githubusercontent.com/obra/superpowers/main/marketplace.json 2>/dev/null || true
+claude plugin marketplace add anthropics/skills 2>/dev/null || true
+claude plugin marketplace add obra/superpowers 2>/dev/null || true
 echo ""
 
 # Official plugins

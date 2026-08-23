@@ -38,6 +38,9 @@ Skills are always up to date — no manual syncing needed.
 - **frontend-development** — React, Next.js, TypeScript, Tailwind best practices
 - **webapp-testing** — Playwright testing patterns
 
+### Writing
+- **humanizer** — Strips AI-writing fingerprints from prose and puts real voice back in. 34 patterns from Wikipedia's "Signs of AI writing" (WikiProject AI Cleanup): significance inflation, rule-of-three lists, copula avoidance, em dash overuse, rhetorical questions, reassurance kickers. Applies to page copy, blog posts, metadata, and schema descriptions. Ported from hank's hermes skills. MIT, Siqi Chen (@blader).
+
 ### Development
 - **test-driven-development** — TDD workflow (Red-Green-Refactor)
 
@@ -76,6 +79,7 @@ setup/
 
 distinctive-design/SKILL.md
 frontend-design/SKILL.md
+humanizer/SKILL.md
 web-design-expert.md
 frontend-development.md
 test-driven-development.md
@@ -86,4 +90,4 @@ n8n-*/SKILL.md
 ---
 
 **Author**: Paul Denman (@watchdogpedro)
-**Last Updated**: February 2026
+**Last Updated**: August 2026

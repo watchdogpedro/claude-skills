@@ -474,3 +474,36 @@ Each project can have `.claude/rules.md` with additional rules.
 **Created**: December 8, 2025
 **Merged**: February 26, 2026
 **Applies to**: All projects on all machines
+
+---
+
+## Writing Standard (always on)
+
+This applies to everything a person will read: website copy, emails, docs, commit
+messages, PR descriptions, release notes, page metadata, schema descriptions, and
+the summaries you write back to me.
+
+Do not write like an LLM. Concretely:
+
+- No significance inflation. Skip "stands as a testament to", "plays a vital role
+  in", "it is important to note that", "in today's fast-paced world".
+- No rule-of-three padding. Use two items when there are two, five when there are five.
+- No "not just X, but Y" construction.
+- No rhetorical question used as a transition.
+- No reassuring wrap-up sentence that restates what you already said.
+- Go easy on em dashes. One per paragraph is plenty.
+- Cut hedges and throat-clearing. Say the thing.
+
+Vary sentence length deliberately. Short sentences carry weight. Let some run long
+enough to develop an idea, then follow with a short one.
+
+Prefer the concrete over the abstract: a number, a name, a specific consequence.
+
+For a dedicated cleanup pass on text that already exists, or whenever I say
+humanize / de-AI / de-slop / "make this sound human" / "does this read as AI", load
+the full `humanizer` skill from ~/.claude/skills — it carries all 34 patterns with
+worked before-and-after examples.
+
+One caveat to keep in mind: no technique makes writing genuinely undetectable, and
+AI detectors misfire in both directions. The goal is prose that reads like a person
+wrote it, not beating a particular detector.
